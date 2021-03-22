@@ -49,26 +49,26 @@ const routes = [
         children: [
           {
             path: "/dashboard/receipt_list",
-            name: "analysis",
-            meta: { title: "分析頁" },
+            name: "display",
+            meta: { title: "display receipt" },
             component: () =>
               import(
                 /* webpackChunkName: "dashboard" */ "../views/Dashboard/ReceiptList"
+              ),
+          },
+          {
+            path: "/dashboard/receipt_chart",
+            name: "analysis",
+            meta: { title: "analysis receipt" },
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboard" */ "../views/Dashboard/ReceiptChart"
               ),
           },
         ],
       },
     ],
   },
-  // {
-  //   path: "/about",
-  //   name: "About",
-  //   // route level code-splitting
-  //   // this generates a separate chunk (about.[hash].js) for this route
-  //   // which is lazy-loaded when the route is visited.
-  //   component: () =>
-  //     import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  // },
 ];
 
 const router = new VueRouter({
@@ -89,11 +89,6 @@ router.beforeEach(async (to, from, next) => {
     console.log("login", is_login);
     next();
   }
-
-  // if (isLogin() === false && to.path !== "./user/login") {
-  //   next({ name: "login" });
-  //   // NProgress.done();
-  // }
 });
 
 router.afterEach(() => {
