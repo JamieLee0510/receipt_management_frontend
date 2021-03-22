@@ -1,27 +1,103 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
+import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 
-Vue.use(VueRouter)
+import { isLogin } from "../utils/auth";
+
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "/user",
+    component: () =>
+      import(/* webpackChunkName: "layout" */ "../layouts/UserLayout"),
+    children: [
+      {
+        path: "/user",
+        redirect: "/user/login",
+      },
+      {
+        path: "/user/login",
+        name: "login",
+        component: () =>
+          import(/* webpackChunkName: "user" */ "../views/User/Login"),
+      },
+      {
+        path: "/user/register",
+        name: "register",
+        component: () =>
+          import(/* webpackChunkName: "user" */ "../views/User/Register"),
+      },
+    ],
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+    path: "/",
+    // meta: { authority: ["user"] },
+    component: () =>
+      import(/* webpackChunkName: "layout" */ "../layouts/BasicLayout"),
+    children: [
+      {
+        path: "/",
+        redirect: "/dashboard/receipt_list",
+      },
+      {
+        path: "/dashboard",
+        name: "dashboard",
+        meta: { icon: "dashboard", title: "receipt management" },
+        component: { render: (h) => h("router-view") },
+        children: [
+          {
+            path: "/dashboard/receipt_list",
+            name: "analysis",
+            meta: { title: "分析頁" },
+            component: () =>
+              import(
+                /* webpackChunkName: "dashboard" */ "../views/Dashboard/ReceiptList"
+              ),
+          },
+        ],
+      },
+    ],
+  },
+  // {
+  //   path: "/about",
+  //   name: "About",
+  //   // route level code-splitting
+  //   // this generates a separate chunk (about.[hash].js) for this route
+  //   // which is lazy-loaded when the route is visited.
+  //   component: () =>
+  //     import(/* webpackChunkName: "about" */ "../views/About.vue"),
+  // },
+];
 
 const router = new VueRouter({
-  routes
-})
+  base: process.env.BASE_URL,
+  routes,
+});
 
-export default router
+router.beforeEach(async (to, from, next) => {
+  const is_login = await isLogin();
+  if (to.path !== from.path) {
+    NProgress.start();
+  }
+  if (!is_login && to.path !== "/user/login" && to.path !== "/user/register") {
+    console.log("not login", is_login);
+    next({ path: "/user/login" });
+    NProgress.done();
+  } else {
+    console.log("login", is_login);
+    next();
+  }
+
+  // if (isLogin() === false && to.path !== "./user/login") {
+  //   next({ name: "login" });
+  //   // NProgress.done();
+  // }
+});
+
+router.afterEach(() => {
+  NProgress.done();
+});
+
+export default router;
