@@ -10,7 +10,7 @@
 
 註冊、登入、登出
 
-#### 發票管理工程
+#### 2.發票管理功能：
 
 發票輸入
 ![image](https://i.imgur.com/9xWvvDT.png)
