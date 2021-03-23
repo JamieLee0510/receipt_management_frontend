@@ -19,6 +19,7 @@ import {
   TimePicker,
   FormModel,
   Popconfirm,
+  Dropdown,
 } from "ant-design-vue";
 
 import { Row, Col } from "ant-design-vue/lib/grid";
@@ -41,6 +42,7 @@ Vue.use(Modal);
 Vue.use(TimePicker);
 Vue.use(FormModel);
 Vue.use(Popconfirm);
+Vue.use(Dropdown);
 
 Vue.config.productionTip = false;
 
